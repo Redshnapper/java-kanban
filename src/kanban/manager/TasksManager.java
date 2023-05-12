@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TasksManager {
-    private static int id = 0;
+    private static long id = 0;
     private final HashMap<Long, Task> taskMap = new HashMap<>();
     private final HashMap<Long, Subtask> subtaskMap = new HashMap<>();
     private final HashMap<Long, Epic> epicMap = new HashMap<>();
@@ -23,14 +23,14 @@ public class TasksManager {
         return epicSubtasks;
     }
 
-    public int addNewTask(Task task) {
+    public long addNewTask(Task task) {
         id++;
         task.setId(id);
         createTask(task);
         return id;
     }
 
-    public int addNewSubtask(Subtask subtask) {
+    public long addNewSubtask(Subtask subtask) {
         id++;
         subtask.setId(id);
         createSubtask(subtask);
@@ -40,7 +40,7 @@ public class TasksManager {
         return id;
     }
 
-    public int addNewEpic(Epic epic) {
+    public long addNewEpic(Epic epic) {
         id++;
         epic.setId(id);
         createEpic(epic);
@@ -91,7 +91,7 @@ public class TasksManager {
         subtaskMap.clear();
     }
 
-    public Task getTaskById(int id) {
+    public Task getTaskById(long id) {
         if (taskMap.containsKey(id)) {
             Task task = taskMap.get(id);
             return task;
@@ -101,7 +101,7 @@ public class TasksManager {
         }
     }
 
-    public Subtask getSubtaskById(int id) {
+    public Subtask getSubtaskById(long id) {
         if (subtaskMap.containsKey(id)) {
             Subtask subtask = subtaskMap.get(id);
             return subtask;
@@ -111,7 +111,7 @@ public class TasksManager {
         }
     }
 
-    public Epic getEpicById(int id) {
+    public Epic getEpicById(long id) {
         if (epicMap.containsKey(id)) {
             Epic epic = epicMap.get(id);
             return epic;

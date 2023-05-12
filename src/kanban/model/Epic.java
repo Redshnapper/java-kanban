@@ -1,7 +1,6 @@
 package kanban.model;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Epic extends Task {
     protected ArrayList<Long> subtaskId = new ArrayList<>();

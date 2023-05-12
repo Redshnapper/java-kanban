@@ -20,9 +20,9 @@ public class Main {
         Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", "NEW", epicId1);
         Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", "DONE", epicId1);
         Subtask subtask3 = new Subtask("Subtask #3-2", "Subtask3 description", "DONE", epicId2);
-        final Integer subtaskId1 = tasksManager.addNewSubtask(subtask1);
-        final Integer subtaskId2 = tasksManager.addNewSubtask(subtask2);
-        final Integer subtaskId3 = tasksManager.addNewSubtask(subtask3);
+        final Long subtaskId1 = tasksManager.addNewSubtask(subtask1);
+        final Long subtaskId2 = tasksManager.addNewSubtask(subtask2);
+        final Long subtaskId3 = tasksManager.addNewSubtask(subtask3);
         printAllTasks(tasksManager);
 
         task1.setStatus("DONE");
