@@ -34,7 +34,7 @@ public class Main {
         tasksManager.updateEpic(epic1);
         printAllTasks(tasksManager);
 
-        tasksManager.deleteSubtask(subtaskId1);
+        tasksManager.deleteSubtask(subtaskId2);
         tasksManager.deleteEpic(epicId2);
         tasksManager.deleteTask(taskId1);
         System.out.println(tasksManager.getSubtasksByEpic(epicId1));
