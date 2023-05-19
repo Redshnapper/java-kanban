@@ -1,6 +1,6 @@
 package kanban;
 
-import kanban.manager.TasksManager;
+import kanban.manager.*;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
@@ -8,7 +8,7 @@ import kanban.model.Task;
 
 public class Main {
     public static void main(String[] args) {
-        TasksManager tasksManager = new TasksManager();
+        TasksManager tasksManager = Managers.getDefault();
         Task task1 = new Task("Task #1", "Task1 description", "NEW");
         Task task2 = new Task("Task #2", "Task2 description", "IN_PROGRESS");
         final long taskId1 = tasksManager.addNewTask(task1);
@@ -25,6 +25,8 @@ public class Main {
         final Long subtaskId3 = tasksManager.addNewSubtask(subtask3);
         printAllTasks(tasksManager);
 
+        System.out.println("--------");
+
         task1.setStatus("DONE");
         subtask3.setStatus("NEW");
         subtask3.setName("Subtask #3-2.1");
@@ -33,6 +35,8 @@ public class Main {
         tasksManager.updateSubtask(subtask3);
         tasksManager.updateEpic(epic1);
         printAllTasks(tasksManager);
+
+        System.out.println("--------");
 
         tasksManager.deleteSubtask(subtaskId3);
         tasksManager.deleteEpic(epicId2);
@@ -43,6 +47,24 @@ public class Main {
         System.out.println(tasksManager.getEpics());
         printAllTasks(tasksManager);
 
+        System.out.println("--------");
+
+        tasksManager.getTaskById(taskId2);
+        tasksManager.getTaskById(taskId2);
+        tasksManager.getEpicById(epicId1);
+        tasksManager.getEpicById(epicId1);
+        tasksManager.getTaskById(taskId2);
+        
+        tasksManager.getTaskById(taskId2);
+        tasksManager.getTaskById(taskId2);
+        tasksManager.getTaskById(taskId2);
+        tasksManager.getTaskById(taskId2);
+        tasksManager.getSubtaskById(subtaskId1);
+
+        tasksManager.getSubtaskById(subtaskId1);
+        tasksManager.getSubtaskById(subtaskId2);
+
+        tasksManager.getHistory();
 
     }
     private static void printAllTasks(TasksManager tasksManager) {
