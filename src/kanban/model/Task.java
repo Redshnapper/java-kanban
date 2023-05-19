@@ -1,23 +1,19 @@
 package kanban.model;
 
+import kanban.manager.TaskStatuses;
+
 public class Task  {
     protected String name;
     protected String description;
-    protected String status;
+    protected TaskStatuses status;
     protected long id;
 
-    public Task(String name, String description, String status) {
+    public Task(String name, String description, TaskStatuses status) {
         this.name = name;
         this.description = description;
         this.status = status;
     }
 
-    public Task(String name, String description, String status, long id) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
-        this.id = id;
-    }
     public String getName() {
         return name;
     }
@@ -26,7 +22,7 @@ public class Task  {
         return description;
     }
 
-    public String getStatus() {
+    public TaskStatuses getStatus() {
         return status;
     }
     public long getId() {
@@ -45,7 +41,7 @@ public class Task  {
         this.description = description;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatuses status) {
         this.status = status;
     }
 

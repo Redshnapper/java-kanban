@@ -235,10 +235,10 @@ public class InMemoryTaskManager implements TasksManager {
         Epic epic = epicMap.get(epicId);
         ArrayList<Long> subs = epic.getSubtaskId();
         if (subs.isEmpty()) {
-            epic.setStatus("NEW");
+            epic.setStatus(TaskStatuses.NEW);
             return;
         }
-        String status = null;
+        TaskStatuses status = null;
         for (long id : subs) {
             final Subtask subtask = subtaskMap.get(id);
             if (status == null && !subtaskMap.isEmpty() && subtask != null) {
@@ -246,10 +246,10 @@ public class InMemoryTaskManager implements TasksManager {
                 continue;
             }
             if (!subtaskMap.isEmpty() && status.equals(subtask.getStatus())
-                    && !status.equals("IN_PROGRESS")) {
+                    && !status.equals(TaskStatuses.IN_PROGRESS)) {
                 continue;
             }
-            epic.setStatus("IN_PROGRESS");
+            epic.setStatus(TaskStatuses.IN_PROGRESS);
             return;
         }
         epic.setStatus(status);
