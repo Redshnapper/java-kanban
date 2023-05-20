@@ -7,12 +7,13 @@ import kanban.model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TasksManager {
     private static long id = 0;
-    private final HashMap<Long, Task> taskMap = new HashMap<>();
-    private final HashMap<Long, Subtask> subtaskMap = new HashMap<>();
-    private final HashMap<Long, Epic> epicMap = new HashMap<>();
+    private final Map<Long, Task> taskMap = new HashMap<>();
+    private final Map<Long, Subtask> subtaskMap = new HashMap<>();
+    private final Map<Long, Epic> epicMap = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
@@ -21,8 +22,8 @@ public class InMemoryTaskManager implements TasksManager {
     }
 
     @Override
-    public ArrayList<Subtask> getEpicSubtasks(long epicId) {
-        ArrayList<Subtask> epicSubtasks = new ArrayList<>();
+    public List<Subtask> getEpicSubtasks(long epicId) {
+        List<Subtask> epicSubtasks = new ArrayList<>();
         for (Subtask subtask : subtaskMap.values()) {
             if (subtask.getEpicId() == epicId) {
                 epicSubtasks.add(subtask);
@@ -77,17 +78,17 @@ public class InMemoryTaskManager implements TasksManager {
     }
 
     @Override
-    public ArrayList<Task> getTasks() {
+    public List<Task> getTasks() {
         return new ArrayList<>(taskMap.values());
     }
 
     @Override
-    public ArrayList<Subtask> getSubtasks() {
+    public List<Subtask> getSubtasks() {
         return new ArrayList<>(subtaskMap.values());
     }
 
     @Override
-    public ArrayList<Epic> getEpics() {
+    public List<Epic> getEpics() {
         return new ArrayList<>(epicMap.values());
     }
 
@@ -207,7 +208,7 @@ public class InMemoryTaskManager implements TasksManager {
 
     @Override
     public void deleteEpic(long id) {
-        ArrayList<Long> subtasksIdToRemove = new ArrayList<>();
+        List<Long> subtasksIdToRemove = new ArrayList<>();
 
         if (epicMap.containsKey(id)){
             for (Subtask value : subtaskMap.values()) {
@@ -225,7 +226,7 @@ public class InMemoryTaskManager implements TasksManager {
     }
 
     @Override
-    public ArrayList<Long> getSubtasksByEpic(long id) {
+    public List<Long> getSubtasksByEpic(long id) {
         Epic epic = epicMap.get(id);
         return new ArrayList<>(epic.getSubtaskId());
     }
@@ -233,7 +234,7 @@ public class InMemoryTaskManager implements TasksManager {
     @Override
     public void updateEpicStatus(long epicId) {
         Epic epic = epicMap.get(epicId);
-        ArrayList<Long> subs = epic.getSubtaskId();
+        List<Long> subs = epic.getSubtaskId();
         if (subs.isEmpty()) {
             epic.setStatus(TaskStatuses.NEW);
             return;

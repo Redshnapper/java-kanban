@@ -25,8 +25,6 @@ public class Main {
         final Long subtaskId3 = tasksManager.addNewSubtask(subtask3);
         printAllTasks(tasksManager);
 
-        System.out.println("--------");
-
         task1.setStatus(TaskStatuses.DONE);
         subtask3.setStatus(TaskStatuses.NEW);
         subtask3.setName("Subtask #3-2.1");
@@ -36,8 +34,6 @@ public class Main {
         tasksManager.updateEpic(epic1);
         printAllTasks(tasksManager);
 
-        System.out.println("--------");
-
         tasksManager.deleteSubtask(subtaskId3);
         tasksManager.deleteEpic(epicId2);
         tasksManager.deleteTask(taskId1);
@@ -46,8 +42,6 @@ public class Main {
         System.out.println(tasksManager.getSubtasks());
         System.out.println(tasksManager.getEpics());
         printAllTasks(tasksManager);
-
-        System.out.println("--------");
 
         tasksManager.getTaskById(taskId2);
         tasksManager.getTaskById(taskId2);
@@ -59,7 +53,6 @@ public class Main {
         tasksManager.getTaskById(taskId2);
         tasksManager.getTaskById(taskId2);
         tasksManager.getTaskById(taskId2);
-        tasksManager.getSubtaskById(subtaskId1);
 
         tasksManager.getSubtaskById(subtaskId1);
         tasksManager.getSubtaskById(subtaskId2);
@@ -84,6 +77,7 @@ public class Main {
         for (Task subtask : tasksManager.getSubtasks()) {
             System.out.println(subtask);
         }
+        System.out.println("--------");
     }
 }
 

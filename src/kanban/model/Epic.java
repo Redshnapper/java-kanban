@@ -3,15 +3,16 @@ package kanban.model;
 import kanban.manager.TaskStatuses;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
-    private final ArrayList<Long> subtaskId = new ArrayList<>();
+    private final List<Long> subtaskId = new ArrayList<>();
 
     public Epic(String name, String description, TaskStatuses status) {
         super(name, description, status);
     }
 
-    public ArrayList<Long> getSubtaskId() {
+    public List<Long> getSubtaskId() {
         return subtaskId;
     }
 

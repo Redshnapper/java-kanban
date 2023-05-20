@@ -4,13 +4,12 @@ import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public interface TasksManager {
 
-    ArrayList<Subtask> getEpicSubtasks(long epicId);
+    List<Subtask> getEpicSubtasks(long epicId);
 
     public List<Task> getHistory();
 
@@ -26,11 +25,11 @@ public interface TasksManager {
 
     Epic createEpic(Epic epic);
 
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
 
-    ArrayList<Subtask> getSubtasks();
+    List<Subtask> getSubtasks();
 
-    ArrayList<Epic> getEpics();
+    List<Epic> getEpics();
 
     void removeTasks();
 
@@ -56,7 +55,7 @@ public interface TasksManager {
 
     void deleteEpic(long id);
 
-    ArrayList<Long> getSubtasksByEpic(long id);
+    List<Long> getSubtasksByEpic(long id);
 
     void updateEpicStatus(long epicId);
 

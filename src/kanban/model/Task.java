@@ -25,6 +25,7 @@ public class Task  {
     public TaskStatuses getStatus() {
         return status;
     }
+
     public long getId() {
         return id;
     }
