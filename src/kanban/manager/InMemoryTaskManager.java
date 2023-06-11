@@ -3,6 +3,7 @@ package kanban.manager;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
+import kanban.model.TaskStatuses;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ public class InMemoryTaskManager implements TasksManager {
     private final Map<Long, Subtask> subtaskMap = new HashMap<>();
     private final Map<Long, Epic> epicMap = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
+
 
     @Override
     public List<Task> getHistory() {
@@ -94,11 +96,17 @@ public class InMemoryTaskManager implements TasksManager {
 
     @Override
     public void removeTasks() {
+        for (Long id : taskMap.keySet()) {
+            historyManager.remove(id);
+        }
         taskMap.clear();
     }
 
     @Override
     public void removeSubtasks() {
+        for (Long id : subtaskMap.keySet()) {
+            historyManager.remove(id);
+        }
         subtaskMap.clear();
         for (Epic epic : epicMap.values()) {
             epic.clearSubsId();
@@ -108,6 +116,12 @@ public class InMemoryTaskManager implements TasksManager {
 
     @Override
     public void removeEpics() {
+        for (Long id : subtaskMap.keySet()) {
+            historyManager.remove(id);
+        }
+        for (Long id : epicMap.keySet()) {
+            historyManager.remove(id);
+        }
         epicMap.clear();
         subtaskMap.clear();
     }
@@ -191,6 +205,7 @@ public class InMemoryTaskManager implements TasksManager {
             System.out.println("Задачи с таким ID нет");
             return;
         }
+        historyManager.remove(id);
         taskMap.remove(id);
     }
 
@@ -201,6 +216,7 @@ public class InMemoryTaskManager implements TasksManager {
         if (subtask == null) {
             return;
         }
+        historyManager.remove(id);
         Epic epic = epicMap.get(subtask.getEpicId());
         epic.removeSubtask(id);
         updateEpicStatus(epic.getId());
@@ -218,8 +234,10 @@ public class InMemoryTaskManager implements TasksManager {
             }
             for (Long idToRemove : subtasksIdToRemove) {
                 subtaskMap.remove(idToRemove);
+                historyManager.remove(idToRemove);
             }
             epicMap.remove(id);
+            historyManager.remove(id);
         } else {
             System.out.println("Эпика с таким ID нет");
         }

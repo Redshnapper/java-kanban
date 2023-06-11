@@ -1,7 +1,5 @@
 package kanban.model;
 
-import kanban.manager.TaskStatuses;
-
 import java.util.ArrayList;
 import java.util.List;
 

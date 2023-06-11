@@ -4,6 +4,7 @@ import kanban.manager.*;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
+import kanban.model.TaskStatuses;
 
 
 public class Main {
@@ -19,47 +20,45 @@ public class Main {
         final long epicId2 = tasksManager.addNewEpic(epic2);
         Subtask subtask1 = new Subtask("Subtask #1-1", "Subtask1 description", TaskStatuses.NEW, epicId1);
         Subtask subtask2 = new Subtask("Subtask #2-1", "Subtask2 description", TaskStatuses.DONE, epicId1);
-        Subtask subtask3 = new Subtask("Subtask #3-2", "Subtask3 description", TaskStatuses.DONE, epicId2);
-        final Long subtaskId1 = tasksManager.addNewSubtask(subtask1);
-        final Long subtaskId2 = tasksManager.addNewSubtask(subtask2);
-        final Long subtaskId3 = tasksManager.addNewSubtask(subtask3);
+        Subtask subtask3 = new Subtask("Subtask #3-2", "Subtask3 description", TaskStatuses.DONE, epicId1);
+        final long subtaskId1 = tasksManager.addNewSubtask(subtask1);
+        final long subtaskId2 = tasksManager.addNewSubtask(subtask2);
+        final long subtaskId3 = tasksManager.addNewSubtask(subtask3);
+
         printAllTasks(tasksManager);
 
-        task1.setStatus(TaskStatuses.DONE);
-        subtask3.setStatus(TaskStatuses.NEW);
-        subtask3.setName("Subtask #3-2.1");
-
-        tasksManager.updateTask(task1);
-        tasksManager.updateSubtask(subtask3);
-        tasksManager.updateEpic(epic1);
-        printAllTasks(tasksManager);
-
-        tasksManager.deleteSubtask(subtaskId3);
-        tasksManager.deleteEpic(epicId2);
-        tasksManager.deleteTask(taskId1);
-        System.out.println(tasksManager.getSubtasksByEpic(epicId1));
-        System.out.println(tasksManager.getTasks());
-        System.out.println(tasksManager.getSubtasks());
-        System.out.println(tasksManager.getEpics());
-        printAllTasks(tasksManager);
-
+        tasksManager.getTaskById(taskId1); // 1
+        tasksManager.getTaskById(taskId1);
+        tasksManager.getTaskById(taskId2); // 2
         tasksManager.getTaskById(taskId2);
-        tasksManager.getTaskById(taskId2);
-        tasksManager.getEpicById(epicId1);
-        tasksManager.getEpicById(epicId1);
-        tasksManager.getTaskById(taskId2);
-        
-        tasksManager.getTaskById(taskId2);
-        tasksManager.getTaskById(taskId2);
-        tasksManager.getTaskById(taskId2);
-        tasksManager.getTaskById(taskId2);
-
-        tasksManager.getSubtaskById(subtaskId1);
-        tasksManager.getSubtaskById(subtaskId2);
-
         tasksManager.getHistory();
+        System.out.println("---------------------");
+        tasksManager.getTaskById(taskId2);
+        tasksManager.getTaskById(taskId2);
+        tasksManager.getTaskById(taskId2); // 2
+        tasksManager.getTaskById(taskId1); // 1
+        tasksManager.getHistory();
+        tasksManager.deleteTask(taskId1);
+        System.out.println("---------------------");
+        tasksManager.getHistory();
+        System.out.println("---------------------");
+        tasksManager.getSubtaskById(subtaskId1); // 5
+        tasksManager.getSubtaskById(subtaskId2); // 6
+        tasksManager.getSubtaskById(subtaskId3); // 7
+        tasksManager.getSubtaskById(subtaskId1);
+        tasksManager.getSubtaskById(subtaskId3);
+        tasksManager.getSubtaskById(subtaskId2);
+        tasksManager.getSubtaskById(subtaskId1);
+        tasksManager.getEpicById(epicId1); // 3
+        tasksManager.getHistory();
+        System.out.println("---------------------");
+        tasksManager.deleteEpic(epicId1);
+        tasksManager.getHistory();
+        System.out.println("---------------------");
+
 
     }
+
     private static void printAllTasks(TasksManager tasksManager) {
         System.out.println("Задачи:");
         for (Task task : tasksManager.getTasks()) {

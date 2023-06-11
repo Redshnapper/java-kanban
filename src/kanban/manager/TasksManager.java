@@ -6,12 +6,11 @@ import kanban.model.Task;
 
 import java.util.List;
 
-
 public interface TasksManager {
 
     List<Subtask> getEpicSubtasks(long epicId);
 
-    public List<Task> getHistory();
+    List<Task> getHistory();
 
     long addNewTask(Task task);
 

@@ -1,4 +1,5 @@
 package kanban.manager;
+
 public final class Managers {
 
     private Managers() {

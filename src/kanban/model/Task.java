@@ -1,8 +1,6 @@
 package kanban.model;
 
-import kanban.manager.TaskStatuses;
-
-public class Task  {
+public class Task {
     protected String name;
     protected String description;
     protected TaskStatuses status;

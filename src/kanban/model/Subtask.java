@@ -1,13 +1,13 @@
 package kanban.model;
 
-import kanban.manager.TaskStatuses;
-
 public class Subtask extends Task {
     protected long epicId;
+
     public Subtask(String name, String description, TaskStatuses status, long epicId) {
         super(name, description, status);
         this.epicId = epicId;
     }
+
     public long getEpicId() {
         return epicId;
     }
