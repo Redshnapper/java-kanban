@@ -5,6 +5,12 @@ import java.util.List;
 
 public class Epic extends Task {
     private final List<Long> subtaskId = new ArrayList<>();
+    private final TasksTypes epicType = TasksTypes.EPIC;
+
+    @Override
+    public TasksTypes getTaskType() {
+        return epicType;
+    }
 
     public Epic(String name, String description, TaskStatuses status) {
         super(name, description, status);
@@ -14,7 +20,7 @@ public class Epic extends Task {
         return subtaskId;
     }
 
-    public void removeSubtask(long id){
+    public void removeSubtask(long id) {
         if (!subtaskId.contains(id)) {
             System.out.println("Такого айди тут нет");
         } else {

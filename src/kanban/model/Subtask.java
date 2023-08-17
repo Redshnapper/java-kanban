@@ -2,6 +2,12 @@ package kanban.model;
 
 public class Subtask extends Task {
     protected long epicId;
+    private final TasksTypes subtaskType = TasksTypes.SUBTASK;
+
+    @Override
+    public TasksTypes getTaskType() {
+        return subtaskType;
+    }
 
     public Subtask(String name, String description, TaskStatuses status, long epicId) {
         super(name, description, status);

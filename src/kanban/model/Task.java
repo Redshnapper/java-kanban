@@ -5,6 +5,11 @@ public class Task {
     protected String description;
     protected TaskStatuses status;
     protected long id;
+    private final TasksTypes taskType = TasksTypes.TASK;
+
+    public TasksTypes getTaskType() {
+        return taskType;
+    }
 
     public Task(String name, String description, TaskStatuses status) {
         this.name = name;

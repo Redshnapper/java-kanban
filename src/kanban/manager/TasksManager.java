@@ -4,6 +4,7 @@ import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface TasksManager {
@@ -12,7 +13,7 @@ public interface TasksManager {
 
     List<Task> getHistory();
 
-    long addNewTask(Task task);
+    long addNewTask(Task task) ;
 
     long addNewSubtask(Subtask subtask);
 

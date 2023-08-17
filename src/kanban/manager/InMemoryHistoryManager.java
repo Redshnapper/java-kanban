@@ -82,13 +82,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             list.add(current.item);
             current = current.next;
         }
-        printHistory(list);
-        return list;
-    }
 
-    public void printHistory(ArrayList<Task> list) {
-        for (Task task : list) {
-            System.out.println(task.getId());
-        }
+        return new ArrayList<>(list);
     }
 }
