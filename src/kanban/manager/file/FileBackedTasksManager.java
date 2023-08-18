@@ -198,7 +198,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при сохранении таски");
         }
         return taskId;
     }
@@ -209,7 +209,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при сохранении сабтаски");
         }
         return subtaskId;
     }
@@ -220,7 +220,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при сохранении эпика");
         }
         return epicId;
     }
@@ -261,7 +261,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка удалении всех задач");
         }
     }
 
@@ -271,7 +271,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            System.out.println("Ошибка при удалении сабтаски " + e.getMessage());
+            System.out.println("Ошибка при удалении всех сабтасок");
         }
     }
 
@@ -281,7 +281,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при удалении эпиков");
         }
     }
 
@@ -291,7 +291,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при получении задачи по ID");
         }
         return task;
     }
@@ -302,7 +302,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при получении сабтаски по ID");
         }
         return subtask;
     }
@@ -313,7 +313,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при получении эпика по ID");
         }
         return epic;
     }
@@ -339,7 +339,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при удалении задачи по ID");
         }
     }
 
@@ -349,7 +349,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при удалении сабтаски по ID");
         }
     }
 
@@ -359,7 +359,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             save();
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ошибка при удалении эпика по ID");
         }
     }
 
