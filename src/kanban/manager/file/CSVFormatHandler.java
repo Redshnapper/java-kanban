@@ -8,16 +8,16 @@ import kanban.model.TasksTypes;
 import java.util.List;
 
 public class CSVFormatHandler {
-    private final String fileName = "C:\\Users\\Andrej\\dev\\java-kanban\\src\\kanban\\resources\\allTasks.csv";
-    public String getFileName() {
+    private static final String fileName = "C:\\Users\\Andrej\\dev\\java-kanban\\src\\kanban\\resources\\allTasks.csv";
+    public static String getFileName() {
         return fileName;
     }
 
-    public String getCsv() {
+    public static String getCsv() {
         return "id,type,name,status,description,epic\n";
     }
 
-    public String historyToString(HistoryManager historyManager) {
+    public static String historyToString(HistoryManager historyManager) {
         StringBuilder history = new StringBuilder();
         List<Task> historyList = historyManager.getHistory();
         for (Task task : historyList) {
@@ -29,7 +29,7 @@ public class CSVFormatHandler {
         }
         return history.toString();
     }
-    public String toString(Task task) {
+    public static String toString(Task task) {
         if (task.getTaskType().equals(TasksTypes.SUBTASK)) {
             Subtask subtask = (Subtask) task;
 //            return String.join(",", String.valueOf(subtask.getId()),

@@ -4,7 +4,6 @@ import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface TasksManager {
@@ -59,4 +58,5 @@ public interface TasksManager {
 
     void updateEpicStatus(long epicId);
 
+    long getId();
 }
