@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private static final File file = new File(CSVFormatHandler.getFileName());
+    private static final File file = CSVFormatHandler.getFile();
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         TasksManager manager = Managers.getDefaultFile();
         Task task1 = new Task("Task #1", "Task1 description", TaskStatuses.NEW);
         Task task2 = new Task("Task #2", "Task2 description", TaskStatuses.IN_PROGRESS);
@@ -44,6 +44,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         manager.getSubtaskById(subtaskId3); // 7
         manager.getTaskById(taskId2); // 2
         manager.getTaskById(taskId1); // 1
+        manager.getEpicById(epicId1); // 3
+        manager.getEpicById(epicId2); // 4
+
 
         FileBackedTasksManager fromFileManager = loadFromFile(file);
 
@@ -79,7 +82,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("--------");
     }
 
-    static FileBackedTasksManager loadFromFile(File file){
+    static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager fromFileManager = new FileBackedTasksManager();
         String content;
         try {
@@ -145,7 +148,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return history;
     }
 
-    public static Task fromString(String value) {
+    static Task fromString(String value) {
         String[] parts = value.split(",");
         TaskStatuses status = convertStatusType(parts[3]);
         Task task;
@@ -168,7 +171,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public static TaskStatuses convertStatusType(String status) {
+    static TaskStatuses convertStatusType(String status) {
         switch (status) {
             case "NEW":
                 return TaskStatuses.NEW;
@@ -182,8 +185,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public void save() {
-        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(CSVFormatHandler.getFileName()))) {
+    void save() {
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(CSVFormatHandler.getFile()))) {
             fileWriter.write(CSVFormatHandler.getCsv());
             for (Task task : getTasks()) {
                 fileWriter.write(CSVFormatHandler.toString(task) + '\n');
