@@ -9,9 +9,13 @@ import java.io.File;
 import java.util.List;
 
 public class CSVFormatHandler {
+    private static File file = new File("src\\kanban\\resources\\allTasks.csv");
 
+    public static void setFile(File newFile) {
+        file = newFile;
+    }
     public static File getFile() {
-        return new File("src\\kanban\\resources\\allTasks.csv");
+        return file;
     }
 
     public static String getCsv() {

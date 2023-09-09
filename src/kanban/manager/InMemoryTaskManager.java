@@ -1,14 +1,13 @@
 package kanban.manager;
 
+import kanban.manager.file.StartDateComparator;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
 import kanban.model.TaskStatuses;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class InMemoryTaskManager implements TasksManager {
     private static long id = 0;
@@ -16,14 +15,8 @@ public class InMemoryTaskManager implements TasksManager {
     private final Map<Long, Subtask> subtaskMap = new HashMap<>();
     private final Map<Long, Epic> epicMap = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-
-    public static void setId(long id) {
-        InMemoryTaskManager.id = id;
-    }
-
-    public long getId() {
-        return id;
-    }
+    private final StartDateComparator comparator = new StartDateComparator();
+    private final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
 
     public Map<Long, Task> getTaskMap() {
         return new HashMap<>(taskMap);
@@ -41,6 +34,33 @@ public class InMemoryTaskManager implements TasksManager {
         return historyManager;
     }
 
+
+    public void printPrioritizedTasks() {
+        prioritizedTasks.forEach(System.out::println);
+    }
+
+    @Override
+    public Set<Task> getPrioritizedTasks() {
+        return prioritizedTasks;
+    }
+
+    private boolean validate(Task task) {
+//        System.out.println("check");
+        LocalDateTime startDate = task.getStartDate();
+        if (startDate == null) return false;
+        LocalDateTime endDate = task.getEndDate();
+        if (prioritizedTasks.isEmpty()) return false;
+
+        boolean check = prioritizedTasks.stream()
+                .anyMatch(t -> t.getStartDate().isBefore(endDate) && t.getEndDate().isAfter(startDate)
+                        || t.getStartDate().isEqual(endDate) || t.getEndDate().isEqual(startDate));
+        if (check) {
+            throw new RuntimeException("Валидация не пройдена, задачи пересекаются по времени!");
+        }
+//        System.out.println(check);
+        return false;
+    }
+
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
@@ -49,12 +69,15 @@ public class InMemoryTaskManager implements TasksManager {
     @Override
     public List<Subtask> getEpicSubtasks(long epicId) {
         List<Subtask> epicSubtasks = new ArrayList<>();
-        for (Subtask subtask : subtaskMap.values()) {
-            if (subtask.getEpicId() == epicId) {
-                epicSubtasks.add(subtask);
+        if (epicMap.containsKey(epicId)) {
+            for (Subtask subtask : subtaskMap.values()) {
+                if (subtask.getEpicId() == epicId) {
+                    epicSubtasks.add(subtask);
+                }
             }
-        }
-        return epicSubtasks;
+            return new ArrayList<>(epicSubtasks);
+        } else return null;
+
     }
 
     @Override
@@ -62,6 +85,11 @@ public class InMemoryTaskManager implements TasksManager {
         id++;
         task.setId(id);
         createTask(task);
+        validate(task);
+        if (task.getStartDate() == null) {
+            task.setStartDate(LocalDateTime.of(3000, 1, 1, 0, 0, 0));
+        }
+        prioritizedTasks.add(task);
         return id;
     }
 
@@ -73,6 +101,11 @@ public class InMemoryTaskManager implements TasksManager {
         Epic epic = epicMap.get(subtask.getEpicId());
         epic.setSubtaskId(id);
         updateEpicStatus(epic.getId());
+        validate(subtask);
+        if (subtask.getStartDate() == null) {
+            subtask.setStartDate(LocalDateTime.of(3000, 1, 1, 0, 0, 0));
+        }
+        prioritizedTasks.add(subtask);
         return id;
     }
 
@@ -152,39 +185,30 @@ public class InMemoryTaskManager implements TasksManager {
 
     @Override
     public Task getTaskById(long id) {
-        if (taskMap.containsKey(id)) {
-            Task task = taskMap.get(id);
+        Task task = taskMap.get(id);
+        if (task != null) {
             historyManager.add(task);
-            return task;
-        } else {
-            System.out.println("Задачи с таким ID нет");
-            return null;
         }
+        return task;
 
     }
 
     @Override
     public Subtask getSubtaskById(long id) {
-        if (subtaskMap.containsKey(id)) {
-            Subtask subtask = subtaskMap.get(id);
+        Subtask subtask = subtaskMap.get(id);
+        if (subtask != null) {
             historyManager.add(subtask);
-            return subtask;
-        } else {
-            System.out.println("Подзадачи с таким ID нет");
-            return null;
         }
+        return subtask;
     }
 
     @Override
     public Epic getEpicById(long id) {
-        if (epicMap.containsKey(id)) {
-            Epic epic = epicMap.get(id);
+        Epic epic = epicMap.get(id);
+        if (epic != null) {
             historyManager.add(epic);
-            return epic;
-        } else {
-            System.out.println("Эпика с таким ID нет");
-            return null;
         }
+        return epic;
     }
 
     @Override
@@ -225,18 +249,16 @@ public class InMemoryTaskManager implements TasksManager {
 
     @Override
     public void deleteTask(long id) {
-        if (!taskMap.containsKey(id)) {
-            System.out.println("Задачи с таким ID нет");
+        Task task = taskMap.remove(id);
+        if (task == null) {
             return;
         }
         historyManager.remove(id);
-        taskMap.remove(id);
     }
 
     @Override
     public void deleteSubtask(long id) {
         Subtask subtask = subtaskMap.remove(id);
-
         if (subtask == null) {
             return;
         }
@@ -262,8 +284,6 @@ public class InMemoryTaskManager implements TasksManager {
             }
             epicMap.remove(id);
             historyManager.remove(id);
-        } else {
-            System.out.println("Эпика с таким ID нет");
         }
     }
 
@@ -296,5 +316,14 @@ public class InMemoryTaskManager implements TasksManager {
             return;
         }
         epic.setStatus(status);
+    }
+
+    public static void setId(long id) {
+        InMemoryTaskManager.id = id;
+    }
+
+    @Override
+    public long getId() {
+        return id;
     }
 }

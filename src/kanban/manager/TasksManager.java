@@ -5,6 +5,7 @@ import kanban.model.Subtask;
 import kanban.model.Task;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TasksManager {
 
@@ -59,4 +60,8 @@ public interface TasksManager {
     void updateEpicStatus(long epicId);
 
     long getId();
+
+    void printPrioritizedTasks();
+
+    Set<Task> getPrioritizedTasks();
 }

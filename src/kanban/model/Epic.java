@@ -2,14 +2,14 @@ package kanban.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Epic extends Task {
     private final List<Long> subtaskId = new ArrayList<>();
-    private final TasksTypes epicType = TasksTypes.EPIC;
 
     @Override
     public TasksTypes getTaskType() {
-        return epicType;
+        return TasksTypes.EPIC;
     }
 
     public Epic(String name, String description, TaskStatuses status) {
@@ -21,9 +21,7 @@ public class Epic extends Task {
     }
 
     public void removeSubtask(long id) {
-        if (!subtaskId.contains(id)) {
-            System.out.println("Такого айди тут нет");
-        } else {
+        if (subtaskId.contains(id)) {
             subtaskId.remove(id);
         }
     }
@@ -41,8 +39,15 @@ public class Epic extends Task {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return subtaskId == epic.subtaskId;
+        return id == epic.id && Objects.equals(name, epic.name) && Objects.equals(description, epic.description)
+                && status == epic.status && getTaskType() == epic.getTaskType();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtaskId, getTaskType());
     }
 
     @Override
