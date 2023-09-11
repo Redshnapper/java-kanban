@@ -1,6 +1,7 @@
 package test.memory;
 
 import kanban.manager.InMemoryTaskManager;
+import kanban.manager.exception.ValidateTaskTimeException;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
@@ -10,6 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import test.TasksManagerTest;
 
+import org.junit.jupiter.api.function.Executable;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +33,71 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
     @AfterEach
     void cleanIds() {
         taskManager.setId(0);
+    }
+
+    @Test
+    void addTaskWithTimeShouldReturnEndDateEquals01_01_2023_12_00_00() {
+        LocalDateTime time = LocalDateTime.of(2023, 1, 1, 11, 1);
+        int duration = 60;
+        LocalDateTime endTime = time.plusMinutes(duration);
+        Task withTimeTask = new Task("Task 1", "Task 1", NEW, time, duration);
+        taskManager.addNewTask(withTimeTask);
+
+        assertEquals(time, withTimeTask.getStartDate(),"Дата начала не совпадает");
+        assertEquals(duration, withTimeTask.getDuration(), "Длительность не совпадает");
+        assertEquals(endTime, withTimeTask.getEndDate(), "Дата окончания не совпадает");
+    }
+    @Test
+    void addSubtaskWithTimeShouldReturnEndDateEquals01_01_2023_12_00_00() {
+        LocalDateTime time = LocalDateTime.of(2023, 1, 1, 11, 1);
+        int duration = 60;
+        LocalDateTime endTime = time.plusMinutes(duration);
+        long epicId = taskManager.addNewEpic(epic);
+        Subtask subtaskWithTime = new Subtask("Subtask 1", "Sub 1", NEW, time, duration, epicId);
+        taskManager.addNewSubtask(subtaskWithTime);
+
+        assertEquals(time, subtaskWithTime.getStartDate(), "Дата начала не совпадает");
+        assertEquals(duration, subtaskWithTime.getDuration(), "Длительность не совпадает");
+        assertEquals(endTime, subtaskWithTime.getEndDate(), "Дата окончания не совпадает");
+    }
+    @Test
+    void addEpicWithSubtaskShouldReturnEndDateEquals01_01_2023_12_00_00() {
+        LocalDateTime time = LocalDateTime.of(2023, 1, 1, 11, 0);
+        int duration = 60;
+        LocalDateTime endTime = time.plusMinutes(duration);
+        long epicId = taskManager.addNewEpic(epic);
+        Subtask subtaskWithTime = new Subtask("Subtask 1", "Sub 1", NEW, time, duration, epicId);
+        taskManager.addNewSubtask(subtaskWithTime);
+
+        assertEquals(time, epic.getStartDate(), "Дата начала не совпадает");
+        assertEquals(duration, epic.getDuration(), "Длительность не совпадает");
+        assertEquals(endTime, epic.getEndTime(), "Дата окончания не совпадает");
+    }
+
+    @Test
+    void validateShouldThrowsExceptionWithTasksIntersection() {
+        LocalDateTime time = LocalDateTime.of(2023, 1, 1, 1, 1);
+        Task withTimeTask = new Task("Task 1", "Task 1", NEW, time, 300);
+        Task withTimeSecondTask = new Task("Task 2", "Task 2", NEW, time, 300);
+        taskManager.addNewTask(withTimeTask);
+        final ValidateTaskTimeException exception = assertThrows(
+                ValidateTaskTimeException.class,
+                () -> taskManager.addNewTask(withTimeSecondTask));
+
+        assertEquals("Валидация не пройдена, задачи пересекаются по времени!", exception.getMessage());
+    }
+
+    @Test
+    void validateShouldThrowsExceptionWithSubtasksIntersection() {
+        LocalDateTime time = LocalDateTime.of(2023, 1, 1, 1, 1);
+        Task withTimeSubtask = new Subtask("Subtask 1", "Sub 1", NEW, time, 300, 1);
+        Task withTimeSecondSubtask = new Subtask("Subtask 2", "Sub 2", NEW, time, 300, 1);
+        taskManager.addNewTask(withTimeSubtask);
+
+        final ValidateTaskTimeException exception = assertThrows(
+                ValidateTaskTimeException.class,
+                () -> taskManager.addNewTask(withTimeSecondSubtask));
+        assertEquals("Валидация не пройдена, задачи пересекаются по времени!", exception.getMessage());
     }
 
     @Test
@@ -470,7 +539,6 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
 
         assertNotNull(savedTask, "Задача не найдена");
         assertEquals(task, savedTask, "Задачи не совпадают");
-
     }
 
     @Test

@@ -1,5 +1,6 @@
 package kanban.manager;
 
+import kanban.manager.exception.ValidateTaskTimeException;
 import kanban.manager.file.StartDateComparator;
 import kanban.model.Epic;
 import kanban.model.Subtask;
@@ -35,17 +36,12 @@ public class InMemoryTaskManager implements TasksManager {
     }
 
 
-    public void printPrioritizedTasks() {
-        prioritizedTasks.forEach(System.out::println);
-    }
-
     @Override
     public Set<Task> getPrioritizedTasks() {
         return prioritizedTasks;
     }
 
     private boolean validate(Task task) {
-//        System.out.println("check");
         LocalDateTime startDate = task.getStartDate();
         if (startDate == null) return false;
         LocalDateTime endDate = task.getEndDate();
@@ -55,9 +51,8 @@ public class InMemoryTaskManager implements TasksManager {
                 .anyMatch(t -> t.getStartDate().isBefore(endDate) && t.getEndDate().isAfter(startDate)
                         || t.getStartDate().isEqual(endDate) || t.getEndDate().isEqual(startDate));
         if (check) {
-            throw new RuntimeException("Валидация не пройдена, задачи пересекаются по времени!");
+            throw new ValidateTaskTimeException("Валидация не пройдена, задачи пересекаются по времени!");
         }
-//        System.out.println(check);
         return false;
     }
 
@@ -105,6 +100,7 @@ public class InMemoryTaskManager implements TasksManager {
         if (subtask.getStartDate() == null) {
             subtask.setStartDate(LocalDateTime.of(3000, 1, 1, 0, 0, 0));
         }
+        epic.calculateTime(subtaskMap);
         prioritizedTasks.add(subtask);
         return id;
     }

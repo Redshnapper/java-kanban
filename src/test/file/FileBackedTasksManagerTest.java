@@ -19,9 +19,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static kanban.model.TaskStatuses.NEW;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTasksManagerTest extends TasksManagerTest<FileBackedTasksManager> {
@@ -36,10 +37,12 @@ class FileBackedTasksManagerTest extends TasksManagerTest<FileBackedTasksManager
         CSVFormatHandler.setFile(file);
 
     }
+
     @AfterEach
     void cleanIds() {
         InMemoryTaskManager.setId(0);
     }
+
     @AfterEach
     void cleanData() {
         fileBackedTasksManager = null;
@@ -50,6 +53,61 @@ class FileBackedTasksManagerTest extends TasksManagerTest<FileBackedTasksManager
             throw new ManagerSaveException("Ошибка во время сохранения файла " + e.getMessage());
         }
     }
+
+
+    @Test
+    void loadFromFileShouldReturnTaskEndDateEquals01_01_2023_12_00_00() {
+        LocalDateTime time = LocalDateTime.of(2023, 1, 1, 11, 1);
+        int duration = 60;
+        LocalDateTime endTime = time.plusMinutes(duration);
+        Task withTimeTask = new Task("Task 1", "Task 1", NEW, time, duration);
+        fileBackedTasksManager.addNewTask(withTimeTask);
+        FileBackedTasksManager savedManager = fileBackedTasksManager.loadFromFile(file);
+        LocalDateTime savedStartDate = savedManager.getTasks().get(0).getStartDate();
+        LocalDateTime savedEndDate = savedManager.getTasks().get(0).getEndDate();
+        int savedDuration = savedManager.getTasks().get(0).getDuration();
+
+        assertEquals(time, savedStartDate, "Дата начала не совпадает");
+        assertEquals(duration, savedDuration, "Длительность не совпадает");
+        assertEquals(endTime, savedEndDate, "Дата окончания не совпадает");
+    }
+
+    @Test
+    void loadFromFileShouldReturnSubtaskEndDateEquals01_01_2023_12_00_00() {
+        LocalDateTime time = LocalDateTime.of(2023, 1, 1, 11, 1);
+        int duration = 60;
+        LocalDateTime endTime = time.plusMinutes(duration);
+        long epicId = fileBackedTasksManager.addNewEpic(epic);
+        Task withTimeTask = new Subtask("Subtask 1", "Subtask 1", NEW, time, duration, epicId);
+        fileBackedTasksManager.addNewTask(withTimeTask);
+        FileBackedTasksManager savedManager = fileBackedTasksManager.loadFromFile(file);
+        LocalDateTime savedStartDate = savedManager.getSubtasks().get(0).getStartDate();
+        LocalDateTime savedEndDate = savedManager.getSubtasks().get(0).getEndDate();
+        int savedDuration = savedManager.getSubtasks().get(0).getDuration();
+
+        assertEquals(time, savedStartDate, "Дата начала не совпадает");
+        assertEquals(duration, savedDuration, "Длительность не совпадает");
+        assertEquals(endTime, savedEndDate, "Дата окончания не совпадает");
+    }
+
+    @Test
+    void loadFromFileShouldReturnEpicEndDateEquals01_01_2023_12_00_00() {
+        LocalDateTime time = LocalDateTime.of(2023, 1, 1, 11, 1);
+        int duration = 60;
+        LocalDateTime endTime = time.plusMinutes(duration);
+        long epicId = fileBackedTasksManager.addNewEpic(epic);
+        Task withTimeTask = new Subtask("Subtask 1", "Subtask 1", NEW, time, duration, epicId);
+        fileBackedTasksManager.addNewTask(withTimeTask);
+        FileBackedTasksManager savedManager = fileBackedTasksManager.loadFromFile(file);
+        LocalDateTime savedStartDate = savedManager.getEpics().get(0).getStartDate();
+        LocalDateTime savedEndDate = savedManager.getEpics().get(0).getEndDate();
+        int savedDuration = savedManager.getEpics().get(0).getDuration();
+
+        assertEquals(time, savedStartDate, "Дата начала не совпадает");
+        assertEquals(duration, savedDuration, "Длительность не совпадает");
+        assertEquals(endTime, savedEndDate, "Дата окончания не совпадает");
+    }
+
 
     @Test
     void loadFromEmptyFileShouldReturnNull() {
@@ -103,7 +161,6 @@ class FileBackedTasksManagerTest extends TasksManagerTest<FileBackedTasksManager
         HistoryManager historyManager = savedManager.getHistoryManager();
         List<Task> savedHistory = historyManager.getHistory();
         List<Task> tasks = savedManager.getTasks();
-
 
         assertEquals(task, tasks.get(0), "Задачи не совпадают");
         assertEquals(0, savedHistory.size(), "История больше 0");

@@ -61,7 +61,5 @@ public interface TasksManager {
 
     long getId();
 
-    void printPrioritizedTasks();
-
     Set<Task> getPrioritizedTasks();
 }

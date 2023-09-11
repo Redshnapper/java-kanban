@@ -83,6 +83,7 @@ public class Task {
     }
 
     public LocalDateTime getEndDate() {
+        if (startDate == null) return null;
         return startDate.plusMinutes(duration);
     }
 
@@ -95,6 +96,7 @@ public class Task {
                 ", status=" + status +
                 ", startDate=" + startDate +
                 ", duration=" + duration +
+                ", endDate=" + getEndDate() +
                 '}';
     }
 

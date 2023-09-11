@@ -14,12 +14,13 @@ public class CSVFormatHandler {
     public static void setFile(File newFile) {
         file = newFile;
     }
+
     public static File getFile() {
         return file;
     }
 
     public static String getCsv() {
-        return "id,type,name,status,description,epic\n";
+        return "id,type,name,status,description,start date,duration,end date,epic\n";
     }
 
     public static String historyToString(HistoryManager historyManager) {
@@ -43,12 +44,18 @@ public class CSVFormatHandler {
                     subtask.getName() + "," +
                     subtask.getStatus() + "," +
                     subtask.getDescription() + "," +
+                    subtask.getStartDate() + "," +
+                    subtask.getDuration() + "," +
+                    subtask.getEndDate() + "," +
                     subtask.getEpicId();
         }
         return task.getId() + "," +
                 task.getTaskType() + "," +
                 task.getName() + "," +
                 task.getStatus() + "," +
-                task.getDescription();
+                task.getDescription() + "," +
+                task.getStartDate() + "," +
+                task.getDuration() + "," +
+                task.getEndDate();
     }
 }

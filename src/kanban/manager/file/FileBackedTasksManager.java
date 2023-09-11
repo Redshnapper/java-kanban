@@ -1,8 +1,6 @@
 package kanban.manager.file;
 
-import kanban.Main;
 import kanban.manager.InMemoryTaskManager;
-import kanban.manager.Managers;
 import kanban.manager.TasksManager;
 import kanban.manager.exception.ManagerSaveException;
 import kanban.model.Epic;
@@ -16,8 +14,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +62,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 //            System.out.printf("%s", task.getId());
 //        }
 //
-}
+    }
 
     private void printAllTasks(TasksManager manager) {
         System.out.println("Задачи:");
@@ -89,15 +87,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager fromFileManager = new FileBackedTasksManager();
         String content;
+
         try {
             content = Files.readString(Path.of(file.getPath()));
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при чтении файла " + e.getMessage());
         }
+
         String[] lines = content.split("\r?\n");
         if (lines[0].equals("")) return null;
+        List<Long> history;
 
-        List<Long> history = historyFromString(lines[lines.length - 1]);
+        if (!lines[lines.length - 2].equals("")) {
+            history = new ArrayList<>();
+        } else {
+            history = historyFromString(lines[lines.length - 1]);
+        }
+
         int iterator = calculateIterator(lines.length, history.size());
         if (iterator == 0) return null;
 
@@ -105,9 +111,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (int i = 1; i < iterator; i++) {
             Task task = fromString(lines[i]);
             final long id = task.getId();
+
             if (id > generatorId) {
                 generatorId = id;
             }
+
             switch (task.getTaskType()) {
                 case TASK:
                     fromFileManager.createTask(task);
@@ -122,13 +130,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     System.out.println("Что-то пошло не так(");
             }
         }
+
         for (Map.Entry<Long, Subtask> e : fromFileManager.getSubtaskMap().entrySet()) {
             final Subtask subtask = e.getValue();
             Epic epic = fromFileManager.getEpicMap().get(subtask.getEpicId());
             epic.setSubtaskId(subtask.getId());
-        }
-        setId(generatorId);
+            epic.calculateTime(fromFileManager.getSubtaskMap());
 
+        }
+
+        setId(generatorId);
 
         for (Long taskId : history) {
             if (fromFileManager.getTaskMap().containsKey(taskId)) {
@@ -141,33 +152,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 fromFileManager.getEpicById(taskId);
             }
         }
+
         return fromFileManager;
+
     }
 
     private List<Long> historyFromString(String value) {
         List<Long> history = new ArrayList<>();
         for (String taskId : value.split(",")) {
-            if (!(taskId.length() > 1)) {
-                history.add(Long.parseLong(taskId));
-            } else {
-                history.clear();
-                break;
-            }
+            history.add(Long.parseLong(taskId));
         }
         return history;
     }
 
-    private Task fromString(String value) {
+    private Task fromString(String value) { //id,type,name,status,description,start date,duration,end date,epic
         String[] parts = value.split(",");
         TaskStatuses status = convertStatusType(parts[3]);
         Task task;
         switch (parts[1]) {
             case "TASK":
-                task = new Task(parts[2], parts[4], status);
+                task = new Task(parts[2], parts[4], status, LocalDateTime.parse(parts[5]), Integer.parseInt(parts[6]));
                 task.setId(Integer.parseInt(parts[0]));
                 return task;
             case "SUBTASK":
-                task = new Subtask(parts[2], parts[4], status, Integer.parseInt(parts[5]));
+                task = new Subtask(parts[2], parts[4], status, LocalDateTime.parse(parts[5]),
+                        Integer.parseInt(parts[6]), Integer.parseInt(parts[8]));
                 task.setId(Integer.parseInt(parts[0]));
                 return task;
             case "EPIC":
@@ -215,14 +224,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private int calculateIterator(int stringsCount, int historyLength) {
-        int iterator;
         if (stringsCount > 1 && historyLength > 0) {
-            return iterator = stringsCount - 2;
+            return stringsCount - 2;
         }
         if (stringsCount >= 2 && historyLength == 0) {
-            return iterator = stringsCount;
+            return stringsCount;
         }
-        return iterator = 0;
+        return 0;
     }
 
     @Override
