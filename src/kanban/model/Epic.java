@@ -21,38 +21,27 @@ public class Epic extends Task {
 
 
     public void calculateTime(Map<Long, Subtask> subs) {
-        List<LocalDateTime> startSubsDate = new ArrayList<>();
-        List<LocalDateTime> lastSubDate = new ArrayList<>();
-        LocalDateTime firstSubsDate;
-        Integer epicDuration = 0;
-        LocalDateTime lastSubsDate;
+        LocalDateTime start = LocalDateTime.MAX;
+        Integer duration = 0;
+        LocalDateTime end = LocalDateTime.MIN;
+
         if (!subs.isEmpty()) {
-            for (Map.Entry<Long, Subtask> e : subs.entrySet()) {
-                final Subtask subtask = e.getValue();
-                if (subtask.getEpicId() == this.getId() && subtask.getStartDate() != null) {
-                    startSubsDate.add(subtask.getStartDate());
-                    lastSubDate.add(subtask.getEndDate());
-                    epicDuration += subtask.getDuration();
+            for (Long id : subtaskId) {
+                Subtask subtask = subs.get(id);
+                duration += subtask.getDuration();
+                if (subtask.getStartDate().isBefore(start)) {
+                    start = subtask.getStartDate();
                 }
-                this.duration = epicDuration;
+                if (subtask.getEndDate().isAfter(end)) {
+                    end = subtask.getEndDate();
+                }
+                this.startDate = start;
+                this.endTime = end;
+                this.duration = duration;
             }
         }
-        if (!startSubsDate.isEmpty()) {
-            firstSubsDate = startSubsDate.get(0);
-            lastSubsDate = lastSubDate.get(0);
-            for (LocalDateTime subStartTime : startSubsDate) {
-                if (firstSubsDate.isAfter(subStartTime)) firstSubsDate = subStartTime;
-            }
-            for (LocalDateTime subEndDate : lastSubDate) {
-                if (lastSubsDate.isBefore(subEndDate)) lastSubsDate = subEndDate;
-            }
-            this.startDate = firstSubsDate;
-            this.endTime = lastSubsDate;
-        }
-
-
-
     }
+
     public LocalDateTime getEndTime() {
         return endTime;
     }

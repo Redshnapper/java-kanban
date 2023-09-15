@@ -19,22 +19,9 @@ public class InMemoryTaskManager implements TasksManager {
     private final StartDateComparator comparator = new StartDateComparator();
     private final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
 
-    public Map<Long, Task> getTaskMap() {
-        return new HashMap<>(taskMap);
-    }
-
-    public Map<Long, Subtask> getSubtaskMap() {
-        return new HashMap<>(subtaskMap);
-    }
-
-    public Map<Long, Epic> getEpicMap() {
-        return new HashMap<>(epicMap);
-    }
-
     public HistoryManager getHistoryManager() {
         return historyManager;
     }
-
 
     @Override
     public Set<Task> getPrioritizedTasks() {
@@ -129,6 +116,18 @@ public class InMemoryTaskManager implements TasksManager {
     public Epic createEpic(Epic epic) {
         epicMap.put(epic.getId(), epic);
         return epic;
+    }
+
+    public List<Long> getTaskIdList() {
+        return new ArrayList<>(taskMap.keySet());
+    }
+
+    public List<Long> getSubtaskIdList() {
+        return new ArrayList<>(subtaskMap.keySet());
+    }
+
+    public List<Long> getEpicIdList() {
+        return new ArrayList<>(epicMap.keySet());
     }
 
     @Override

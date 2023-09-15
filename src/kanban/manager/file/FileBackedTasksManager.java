@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +88,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager fromFileManager = new FileBackedTasksManager();
         String content;
-
+        Map <Long,Subtask> subs = new HashMap<>();
         try {
             content = Files.readString(Path.of(file.getPath()));
         } catch (IOException e) {
@@ -122,6 +123,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     continue;
                 case SUBTASK:
                     fromFileManager.createSubtask((Subtask) task);
+                    subs.put(task.getId(),(Subtask) task);
                     continue;
                 case EPIC:
                     fromFileManager.createEpic((Epic) task);
@@ -131,24 +133,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
         }
 
-        for (Map.Entry<Long, Subtask> e : fromFileManager.getSubtaskMap().entrySet()) {
-            final Subtask subtask = e.getValue();
-            Epic epic = fromFileManager.getEpicMap().get(subtask.getEpicId());
-            epic.setSubtaskId(subtask.getId());
-            epic.calculateTime(fromFileManager.getSubtaskMap());
-
+        for (Subtask subtask : fromFileManager.getSubtasks()) {
+            List<Epic> epics = fromFileManager.getEpics();
+            for (Epic epic : epics) {
+                if (epic.getId() == subtask.getEpicId()) {
+                    epic.setSubtaskId(subtask.getId());
+                    epic.calculateTime(subs);
+                }
+            }
         }
 
         setId(generatorId);
 
         for (Long taskId : history) {
-            if (fromFileManager.getTaskMap().containsKey(taskId)) {
+            if (fromFileManager.getTaskIdList().contains(taskId)) {
                 fromFileManager.getTaskById(taskId);
             }
-            if (fromFileManager.getSubtaskMap().containsKey(taskId)) {
+            if (fromFileManager.getSubtaskIdList().contains(taskId)) {
                 fromFileManager.getSubtaskById(taskId);
             }
-            if (fromFileManager.getEpicMap().containsKey(taskId)) {
+            if (fromFileManager.getEpicIdList().contains(taskId)) {
                 fromFileManager.getEpicById(taskId);
             }
         }

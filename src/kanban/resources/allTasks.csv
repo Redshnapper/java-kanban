@@ -10,4 +10,4 @@ id,type,name,status,description,start date,duration,end date,epic
 9,SUBTASK,Subtask #2-1,DONE,Subtask2 description,2023-10-07T09:00,15000,2023-10-17T19:00,6
 10,SUBTASK,Subtask #3-2,DONE,Subtask3 description,3000-01-01T00:00,0,3000-01-01T00:00,7
 
-7,2,1,6,8,9,10
+7,2,1,6,8,10,9

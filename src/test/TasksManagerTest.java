@@ -1,13 +1,9 @@
 package test;
 
-import kanban.manager.InMemoryTaskManager;
 import kanban.manager.TasksManager;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static kanban.model.TaskStatuses.NEW;
 

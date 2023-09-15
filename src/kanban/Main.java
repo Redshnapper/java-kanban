@@ -49,12 +49,15 @@ public class Main {
         tasksManager.getSubtaskById(subtaskId1); // 8
         tasksManager.getSubtaskById(subtaskId2); // 9
         tasksManager.getSubtaskById(subtaskId3); // 10
+        tasksManager.getSubtaskById(subtaskId3); // 10
+        tasksManager.getSubtaskById(subtaskId2); // 9
 
         FileBackedTasksManager fileBack = new FileBackedTasksManager();
         fileBack = fileBack.loadFromFile(CSVFormatHandler.getFile());
 
         printHistory(fileBack.getHistory());
         printAllTasks(fileBack);
+
     }
 
     private static void printAllTasks(TasksManager tasksManager) {

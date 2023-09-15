@@ -11,13 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import test.TasksManagerTest;
 
-import org.junit.jupiter.api.function.Executable;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static kanban.model.TaskStatuses.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,10 +39,11 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
         Task withTimeTask = new Task("Task 1", "Task 1", NEW, time, duration);
         taskManager.addNewTask(withTimeTask);
 
-        assertEquals(time, withTimeTask.getStartDate(),"Дата начала не совпадает");
+        assertEquals(time, withTimeTask.getStartDate(), "Дата начала не совпадает");
         assertEquals(duration, withTimeTask.getDuration(), "Длительность не совпадает");
         assertEquals(endTime, withTimeTask.getEndDate(), "Дата окончания не совпадает");
     }
+
     @Test
     void addSubtaskWithTimeShouldReturnEndDateEquals01_01_2023_12_00_00() {
         LocalDateTime time = LocalDateTime.of(2023, 1, 1, 11, 1);
@@ -60,6 +57,7 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
         assertEquals(duration, subtaskWithTime.getDuration(), "Длительность не совпадает");
         assertEquals(endTime, subtaskWithTime.getEndDate(), "Дата окончания не совпадает");
     }
+
     @Test
     void addEpicWithSubtaskShouldReturnEndDateEquals01_01_2023_12_00_00() {
         LocalDateTime time = LocalDateTime.of(2023, 1, 1, 11, 0);
@@ -473,63 +471,60 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
     }
 
     @Test
-    void shouldReturnTaskMapWithTaskAndZeroId() {
-        Map<Long, Task> correctMap = new HashMap<>();
-        correctMap.put(0L, task);
+    void shouldReturnEmptyTaskList() {
+        List<Long> savedList = taskManager.getTaskIdList();
+
+        assertEquals(0, savedList.size());
+        assertTrue(savedList.isEmpty());
+    }
+
+    @Test
+    void shouldReturnEmptySubtaskList() {
+        List<Long> savedList = taskManager.getSubtaskIdList();
+
+        assertEquals(0, savedList.size());
+        assertTrue(savedList.isEmpty());
+    }
+
+    @Test
+    void shouldReturnEmptyEpicList() {
+        List<Long> savedList = taskManager.getEpicIdList();
+
+        assertEquals(0, savedList.size());
+        assertTrue(savedList.isEmpty());
+    }
+    @Test
+    void shouldReturnTaskListWithTaskIdEqualZero() {
+        List<Long> correctList = new ArrayList<>();
+        correctList.add(0L);
         taskManager.createTask(task);
-        Map<Long, Task> savedMap = taskManager.getTaskMap();
+        List<Long> savedList = taskManager.getTaskIdList();
 
-        assertNotNull(savedMap);
-        assertEquals(correctMap, savedMap);
+        assertEquals(1, savedList.size());
+        assertEquals(correctList, savedList);
     }
-
     @Test
-    void shouldReturnEmptyTaskMap() {
-        Map<Long, Task> savedMap = taskManager.getTaskMap();
-
-        assertEquals(0, savedMap.size());
-        assertTrue(savedMap.isEmpty());
-    }
-
-    @Test
-    void shouldReturnEmptySubtaskMap() {
-        Map<Long, Subtask> savedMap = taskManager.getSubtaskMap();
-
-        assertEquals(0, savedMap.size());
-        assertTrue(savedMap.isEmpty());
-    }
-
-    @Test
-    void shouldReturnEmptyEpicMap() {
-        Map<Long, Epic> savedMap = taskManager.getEpicMap();
-
-        assertEquals(0, savedMap.size());
-        assertTrue(savedMap.isEmpty());
-    }
-
-    @Test
-    void shouldReturnEpicMapWithEpicAndZeroId() {
-        Map<Long, Epic> correctMap = new HashMap<>();
-        correctMap.put(0L, epic);
+    void shouldReturnEpicListWithEpicIdEqualZero() {
+        List<Long> correctList = new ArrayList<>();
+        correctList.add(0L);
         taskManager.createEpic(epic);
-        Map<Long, Epic> savedMap = taskManager.getEpicMap();
+        List<Long> savedList = taskManager.getEpicIdList();
 
-        assertNotNull(savedMap);
-        assertEquals(correctMap, savedMap);
+        assertEquals(1, savedList.size());
+        assertEquals(correctList, savedList);
     }
 
     @Test
-    void shouldReturnSubtaskMapWithSubtaskAndZeroId() {
-        Map<Long, Subtask> correctMap = new HashMap<>();
+    void shouldReturnSubtaskListWithSubtaskIdEqualZero() {
         long epicId = taskManager.addNewEpic(epic);
         subtask = new Subtask("Subtask", "Subtask description", NEW, epicId);
-
-        correctMap.put(0L, subtask);
+        List<Long> correctList = new ArrayList<>();
+        correctList.add(0L);
         taskManager.createSubtask(subtask);
-        Map<Long, Subtask> savedMap = taskManager.getSubtaskMap();
+        List<Long> savedList = taskManager.getSubtaskIdList();
 
-        assertNotNull(savedMap);
-        assertEquals(correctMap, savedMap);
+        assertEquals(1, savedList.size());
+        assertEquals(correctList, savedList);
     }
 
     @Test
@@ -548,6 +543,7 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
         Task savedTask = taskManager.getTaskById(id);
         Task newTask = taskManager.getTaskById(id1);
 
+        assertNotEquals(savedTask, newTask);
         assertNotEquals(id, id1, "Id совпадают");
         assertEquals(1, id);
         assertEquals(2, id1);
@@ -636,11 +632,4 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
         assertEquals(epic, savedEpic, "Эпики не совпадают");
     }
 
-    //    @Test
-//    void shouldReturnNullIfDeleteTaskByIdWithEmptyTaskMap() {
-//        taskManager.createTask(task);
-//        task.setId(1);
-//        taskManager.deleteTask(task.getId());
-//    } метод delete*, где * - subs, tasks, epics ничего не возвращает, если ID указан не верно или мапа пустая, то
-//    непонятно что с чем сравнивать во время тестов
 }
