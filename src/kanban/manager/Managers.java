@@ -14,12 +14,15 @@ public final class Managers {
     public static TasksManager getDefault() {
         return new InMemoryTaskManager();
     }
+
     public static FileBackedTasksManager getDefaultFile() {
         return new FileBackedTasksManager();
     }
+
     public static HttpTaskManager getDefaultHttp() {
         return new HttpTaskManager("http://localhost:" + "8078/");
     }
+
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }

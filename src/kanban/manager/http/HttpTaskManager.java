@@ -5,7 +5,6 @@ import kanban.LocalDateTimeAdapter;
 import kanban.client.KVTaskClient;
 import kanban.manager.exception.HttpManagerStartException;
 import kanban.manager.file.FileBackedTasksManager;
-import kanban.manager.memory.InMemoryTaskManager;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
@@ -39,7 +38,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonTasksArray = jsonTasks.getAsJsonArray();
             for (JsonElement jsonTask : jsonTasksArray) {
                 Task task = gson.fromJson(jsonTask, Task.class);
-                if(maxId < task.getId())
+                if (maxId < task.getId())
                     maxId = task.getId();
                 this.taskMap.put(task.getId(), task);
             }
@@ -50,7 +49,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonEpicsArray = jsonEpics.getAsJsonArray();
             for (JsonElement jsonEpic : jsonEpicsArray) {
                 Epic task = gson.fromJson(jsonEpic, Epic.class);
-                if(maxId < task.getId())
+                if (maxId < task.getId())
                     maxId = task.getId();
                 this.epicMap.put(task.getId(), task);
             }
@@ -61,7 +60,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
             JsonArray jsonSubtasksArray = jsonSubtasks.getAsJsonArray();
             for (JsonElement jsonSubtask : jsonSubtasksArray) {
                 Subtask task = gson.fromJson(jsonSubtask, Subtask.class);
-                if(maxId < task.getId())
+                if (maxId < task.getId())
                     maxId = task.getId();
                 Epic epic = this.epicMap.get(task.getEpicId());
                 epic.addSubtaskId(task.getId());
@@ -78,9 +77,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
             for (JsonElement jsonTaskId : jsonHistoryArray) {
                 long taskId = jsonTaskId.getAsLong();
                 Task task = this.taskMap.get(taskId);
-                if(task == null)
+                if (task == null)
                     task = this.epicMap.get(taskId);
-                if(task == null)
+                if (task == null)
                     task = this.subtaskMap.get(taskId);
                 this.historyManager.add(task);
             }

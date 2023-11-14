@@ -34,12 +34,14 @@ public class Task {
         this.startDate = startDate;
         this.duration = duration;
     }
+
     public Task(String name, String description, LocalDateTime startDate, Integer duration) {
         this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.duration = duration;
     }
+
     public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }

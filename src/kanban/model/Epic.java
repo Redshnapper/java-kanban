@@ -18,6 +18,7 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description);
     }
+
     public Epic(String name, String description, LocalDateTime startTime, int duration) {
         super(name, description, startTime, duration);
         this.endDate = super.getEndDate();

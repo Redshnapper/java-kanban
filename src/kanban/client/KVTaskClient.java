@@ -9,7 +9,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class KVTaskClient {
-
     private final String url;
     private final String apiToken;
     HttpClient client;
@@ -70,6 +69,5 @@ public class KVTaskClient {
         } catch (IOException | InterruptedException exception) {
             throw new RequestFailedException("Не удалось обработать save-запрос ", exception);
         }
-
     }
 }
