@@ -10,13 +10,12 @@ import java.net.http.HttpResponse;
 
 public class KVTaskClient {
 
-    private String url;
-    private String apiToken;
+    private final String url;
+    private final String apiToken;
     HttpClient client;
 
-
-    public KVTaskClient(int port) {
-        url = "http://localhost:" + port + "/";
+    public KVTaskClient(String url) {
+        this.url = url;
         client = HttpClient.newHttpClient();
         apiToken = register(url);
     }

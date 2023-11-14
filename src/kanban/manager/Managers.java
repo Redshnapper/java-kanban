@@ -17,8 +17,8 @@ public final class Managers {
     public static FileBackedTasksManager getDefaultFile() {
         return new FileBackedTasksManager();
     }
-    public static HttpTaskManager getDefaultHttp(int port) {
-        return new HttpTaskManager(port);
+    public static HttpTaskManager getDefaultHttp() {
+        return new HttpTaskManager("http://localhost:" + "8078/");
     }
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();

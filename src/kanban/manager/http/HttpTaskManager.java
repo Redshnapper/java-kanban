@@ -3,6 +3,7 @@ package kanban.manager.http;
 import com.google.gson.*;
 import kanban.LocalDateTimeAdapter;
 import kanban.client.KVTaskClient;
+import kanban.manager.exception.HttpManagerStartException;
 import kanban.manager.file.FileBackedTasksManager;
 import kanban.manager.memory.InMemoryTaskManager;
 import kanban.model.Epic;
@@ -19,13 +20,16 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private final String SUBTASKS_KEY = "subtasks";
     private final String HISTORY_KEY = "epics";
     private final String EPICS_KEY = "history";
-    private KVTaskClient client;
+    private final KVTaskClient client;
 
 
-    public HttpTaskManager(int port) {
+    public HttpTaskManager(String url) {
         super();
-        this.client = new KVTaskClient(port);
-
+        try {
+            client = new KVTaskClient(url);
+        } catch (RuntimeException e) {
+            throw new HttpManagerStartException("Ошибка при инициализации клиента: \n" + e.getMessage());
+        }
     }
 
     public void load() {

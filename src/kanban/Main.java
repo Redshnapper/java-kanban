@@ -22,7 +22,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
         new KVServer().start();
-        TasksManager manager = Managers.getDefaultHttp(8078);
+        TasksManager manager = Managers.getDefaultHttp();
 
         Task task = new Task("Task #1", "task description", TaskStatuses.NEW);
         manager.addNewTask(task);
