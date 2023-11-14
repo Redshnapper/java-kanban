@@ -1,6 +1,6 @@
 package kanban.manager.file;
 
-import kanban.manager.HistoryManager;
+import kanban.manager.history.HistoryManager;
 import kanban.model.Subtask;
 import kanban.model.Task;
 import kanban.model.TasksTypes;

@@ -1,5 +1,6 @@
-package kanban.manager;
+package kanban.manager.history;
 
+import kanban.manager.history.HistoryManager;
 import kanban.model.Task;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package test.memory;
 
-import kanban.manager.HistoryManager;
+import kanban.manager.history.HistoryManager;
 import kanban.manager.Managers;
 import kanban.model.Epic;
 import kanban.model.Subtask;
@@ -26,7 +26,7 @@ class InMemoryHistoryManagerTest {
     void SetUp() {
         historyManager = Managers.getDefaultHistory();
         task = new Task("Task", "Task description", NEW);
-        epic = new Epic("Epic", "Epic description", NEW);
+        epic = new Epic("Epic", "Epic description");
         long id = epic.getId();
         subtask = new Subtask("Subtask", "Subtask description", DONE, id);
         epic.setSubtaskId(id);

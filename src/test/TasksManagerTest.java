@@ -17,7 +17,7 @@ public class TasksManagerTest<T extends TasksManager> {
 
     protected void init() {
         task = new Task("Task 1", "Task 1 description", NEW);
-        epic = new Epic("Epic 1", "Epic 1 description", NEW);
+        epic = new Epic("Epic 1", "Epic 1 description");
 
     }
 

@@ -1,7 +1,7 @@
 package test.file;
 
-import kanban.manager.HistoryManager;
-import kanban.manager.InMemoryTaskManager;
+import kanban.manager.history.HistoryManager;
+import kanban.manager.memory.InMemoryTaskManager;
 import kanban.manager.Managers;
 import kanban.manager.exception.ManagerSaveException;
 import kanban.manager.file.CSVFormatHandler;

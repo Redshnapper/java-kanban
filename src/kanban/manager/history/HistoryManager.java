@@ -1,4 +1,4 @@
-package kanban.manager;
+package kanban.manager.history;
 
 import kanban.model.Task;
 

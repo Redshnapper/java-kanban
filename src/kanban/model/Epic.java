@@ -8,17 +8,20 @@ import java.util.Objects;
 
 public class Epic extends Task {
     private final List<Long> subtaskId = new ArrayList<>();
-    protected LocalDateTime endTime;
+    protected LocalDateTime endDate;
 
     @Override
     public TasksTypes getTaskType() {
         return TasksTypes.EPIC;
     }
 
-    public Epic(String name, String description, TaskStatuses status) {
-        super(name, description, status);
+    public Epic(String name, String description) {
+        super(name, description);
     }
-
+    public Epic(String name, String description, LocalDateTime startTime, int duration) {
+        super(name, description, startTime, duration);
+        this.endDate = super.getEndDate();
+    }
 
     public void calculateTime(Map<Long, Subtask> subs) {
         LocalDateTime start = LocalDateTime.MAX;
@@ -36,14 +39,15 @@ public class Epic extends Task {
                     end = subtask.getEndDate();
                 }
                 this.startDate = start;
-                this.endTime = end;
+                this.endDate = end;
                 this.duration = duration;
             }
         }
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
+    @Override
+    public LocalDateTime getEndDate() {
+        return endDate;
     }
 
     public void removeSubtask(long id) {
@@ -64,6 +68,9 @@ public class Epic extends Task {
         subtaskId.add(subId);
     }
 
+    public void addSubtaskId(Long id) {
+        subtaskId.add(id);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -89,7 +96,7 @@ public class Epic extends Task {
                 ", status=" + status +
                 ", startDate=" + startDate +
                 ", duration=" + duration +
-                ", endDate=" + endTime +
+                ", endDate=" + endDate +
                 '}';
     }
 }

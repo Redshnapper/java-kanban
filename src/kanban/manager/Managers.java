@@ -1,6 +1,10 @@
 package kanban.manager;
 
 import kanban.manager.file.FileBackedTasksManager;
+import kanban.manager.history.HistoryManager;
+import kanban.manager.history.InMemoryHistoryManager;
+import kanban.manager.http.HttpTaskManager;
+import kanban.manager.memory.InMemoryTaskManager;
 
 public final class Managers {
 
@@ -10,11 +14,12 @@ public final class Managers {
     public static TasksManager getDefault() {
         return new InMemoryTaskManager();
     }
-
     public static FileBackedTasksManager getDefaultFile() {
         return new FileBackedTasksManager();
     }
-
+    public static HttpTaskManager getDefaultHttp(int port) {
+        return new HttpTaskManager(port);
+    }
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
     }

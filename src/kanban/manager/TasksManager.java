@@ -61,5 +61,7 @@ public interface TasksManager {
 
     long getId();
 
+    boolean validate(Task task);
+
     Set<Task> getPrioritizedTasks();
 }

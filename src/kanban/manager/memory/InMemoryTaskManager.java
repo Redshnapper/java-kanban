@@ -1,5 +1,8 @@
-package kanban.manager;
+package kanban.manager.memory;
 
+import kanban.manager.history.HistoryManager;
+import kanban.manager.Managers;
+import kanban.manager.TasksManager;
 import kanban.manager.exception.ValidateTaskTimeException;
 import kanban.manager.file.StartDateComparator;
 import kanban.model.Epic;
@@ -11,24 +14,28 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TasksManager {
-    private static long id = 0;
-    private final Map<Long, Task> taskMap = new HashMap<>();
-    private final Map<Long, Subtask> subtaskMap = new HashMap<>();
-    private final Map<Long, Epic> epicMap = new HashMap<>();
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected static long id = 0;
+    protected final Map<Long, Task> taskMap = new HashMap<>();
+    protected final Map<Long, Subtask> subtaskMap = new HashMap<>();
+    protected final Map<Long, Epic> epicMap = new HashMap<>();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
     private final StartDateComparator comparator = new StartDateComparator();
-    private final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
 
     public HistoryManager getHistoryManager() {
         return historyManager;
     }
 
+
     @Override
     public Set<Task> getPrioritizedTasks() {
         return prioritizedTasks;
     }
-
-    private boolean validate(Task task) {
+    public void addToPrioritizedSet(Task task) {
+        prioritizedTasks.add(task);
+    }
+    @Override
+    public boolean validate(Task task) {
         LocalDateTime startDate = task.getStartDate();
         if (startDate == null) return false;
         LocalDateTime endDate = task.getEndDate();
@@ -96,7 +103,9 @@ public class InMemoryTaskManager implements TasksManager {
     public long addNewEpic(Epic epic) {
         id++;
         epic.setId(id);
+        epic.calculateTime(subtaskMap);
         createEpic(epic);
+        updateEpicStatus(id);
         return id;
     }
 
@@ -228,6 +237,10 @@ public class InMemoryTaskManager implements TasksManager {
         if (epic == null) {
             return;
         }
+        if (subtask.getStartDate() == null) {
+            subtask.setStartDate(LocalDateTime.of(3000, 1, 1, 0, 0, 0));
+        }
+        epic.calculateTime(subtaskMap);
         subtaskMap.put(id, subtask);
         updateEpicStatus(epic.getId());
     }

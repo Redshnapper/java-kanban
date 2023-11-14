@@ -1,6 +1,6 @@
 package test.memory;
 
-import kanban.manager.InMemoryTaskManager;
+import kanban.manager.memory.InMemoryTaskManager;
 import kanban.manager.exception.ValidateTaskTimeException;
 import kanban.model.Epic;
 import kanban.model.Subtask;
@@ -69,7 +69,7 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
 
         assertEquals(time, epic.getStartDate(), "Дата начала не совпадает");
         assertEquals(duration, epic.getDuration(), "Длительность не совпадает");
-        assertEquals(endTime, epic.getEndTime(), "Дата окончания не совпадает");
+        assertEquals(endTime, epic.getEndDate(), "Дата окончания не совпадает");
     }
 
     @Test
@@ -240,7 +240,7 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
     @Test
     void shouldReturnUpdatedEpicFromEpicsMap() {
         long id = taskManager.addNewEpic(epic);
-        Epic updatedEpic = new Epic("Epic 1", "Epic 1 description", IN_PROGRESS);
+        Epic updatedEpic = new Epic("Epic 1", "Epic 1 description");
         updatedEpic.setId(id);
         taskManager.updateEpic(updatedEpic);
 
@@ -250,7 +250,7 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
     @Test
     void updateEpicShouldReturnNullFromEmptyEpicMap() {
         epic.setId(1);
-        Epic updatedEpic = new Epic("Epic 1", "Epic 1 description", IN_PROGRESS);
+        Epic updatedEpic = new Epic("Epic 1", "Epic 1 description");
         updatedEpic.setId(1);
         taskManager.updateEpic(updatedEpic);
 
@@ -426,7 +426,7 @@ class InMemoryTaskManagerTest extends TasksManagerTest<InMemoryTaskManager> {
     @Test
     void shouldReturnListOfTwoEpics() {
         List<Epic> epics = new ArrayList<>();
-        Epic secondEpic = new Epic("Epic 2", "Epic 2 description", NEW);
+        Epic secondEpic = new Epic("Epic 2", "Epic 2 description");
         taskManager.addNewEpic(epic);
         taskManager.addNewEpic(secondEpic);
         epics.add(epic);

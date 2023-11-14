@@ -1,6 +1,7 @@
 package kanban.manager.file;
 
-import kanban.manager.InMemoryTaskManager;
+import kanban.manager.exception.ValidateTaskTimeException;
+import kanban.manager.memory.InMemoryTaskManager;
 import kanban.manager.TasksManager;
 import kanban.manager.exception.ManagerSaveException;
 import kanban.model.Epic;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private static final File file = CSVFormatHandler.getFile();
+
 
     public static void main(String[] args) {
 //        TasksManager manager = Managers.getDefaultFile();
@@ -88,7 +90,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager fromFileManager = new FileBackedTasksManager();
         String content;
-        Map <Long,Subtask> subs = new HashMap<>();
+        Map<Long, Subtask> subs = new HashMap<>();
         try {
             content = Files.readString(Path.of(file.getPath()));
         } catch (IOException e) {
@@ -120,10 +122,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             switch (task.getTaskType()) {
                 case TASK:
                     fromFileManager.createTask(task);
+                    fromFileManager.addToPrioritizedSet(task);
                     continue;
                 case SUBTASK:
                     fromFileManager.createSubtask((Subtask) task);
-                    subs.put(task.getId(),(Subtask) task);
+                    subs.put(task.getId(), (Subtask) task);
+                    fromFileManager.addToPrioritizedSet(task);
                     continue;
                 case EPIC:
                     fromFileManager.createEpic((Epic) task);
@@ -132,7 +136,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     System.out.println("Что-то пошло не так(");
             }
         }
-
         for (Subtask subtask : fromFileManager.getSubtasks()) {
             List<Epic> epics = fromFileManager.getEpics();
             for (Epic epic : epics) {
@@ -142,9 +145,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
             }
         }
+        for (Epic epic : fromFileManager.getEpics()) {
+            fromFileManager.updateEpicStatus(epic.getId());
+        }
 
         setId(generatorId);
-
         for (Long taskId : history) {
             if (fromFileManager.getTaskIdList().contains(taskId)) {
                 fromFileManager.getTaskById(taskId);
@@ -184,7 +189,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 task.setId(Integer.parseInt(parts[0]));
                 return task;
             case "EPIC":
-                task = new Epic(parts[2], parts[4], status);
+                task = new Epic(parts[2], parts[4]);
                 task.setId(Integer.parseInt(parts[0]));
                 return task;
             default:
@@ -340,16 +345,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
+        save();
     }
 
     @Override
     public void updateSubtask(Subtask subtask) {
         super.updateSubtask(subtask);
+        save();
     }
 
     @Override
     public void updateEpic(Epic epic) {
         super.updateEpic(epic);
+        save();
     }
 
     @Override
@@ -378,6 +386,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     @Override
     public void updateEpicStatus(long epicId) {
         super.updateEpicStatus(epicId);
+    }
+
+    @Override
+    public boolean validate(Task task) {
+        return super.validate(task);
     }
 
 }
