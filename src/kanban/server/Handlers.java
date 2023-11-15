@@ -1,9 +1,8 @@
 package kanban.server;
 
 import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.sun.net.httpserver.HttpExchange;
+import kanban.GsonUtils;
 import kanban.LocalDateTimeAdapter;
 import kanban.manager.Managers;
 import kanban.manager.exception.ValidateTaskTimeException;
@@ -28,10 +27,7 @@ public class Handlers {
     public Handlers() {
         File file = CSVFormatHandler.getFile();
         this.fileManager = fileManager.loadFromFile(file);
-        gson = new GsonBuilder()
-                .serializeNulls()
-                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-                .create();
+        gson = GsonUtils.getGson();
     }
 
     public TaskStatuses statusFromString(String status) {

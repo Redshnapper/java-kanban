@@ -11,8 +11,8 @@ import java.net.InetSocketAddress;
 
 public class HttpTaskServer {
     public static final int PORT = 8080;
-    private HttpServer server;
-    private TasksManager manager;
+    private final HttpServer server;
+    private final TasksManager manager;
     Gson gson;
     Handlers handlers;
 

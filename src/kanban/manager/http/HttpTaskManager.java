@@ -1,6 +1,8 @@
 package kanban.manager.http;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import kanban.GsonUtils;
 import kanban.LocalDateTimeAdapter;
 import kanban.client.KVTaskClient;
 import kanban.manager.exception.HttpManagerStartException;
@@ -8,13 +10,15 @@ import kanban.manager.file.FileBackedTasksManager;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
+import kanban.model.TasksTypes;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    private static final Gson gson =
-            new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter()).create();
+    private static final Gson gson = GsonUtils.getGson();
     private final String TASKS_KEY = "tasks";
     private final String SUBTASKS_KEY = "subtasks";
     private final String HISTORY_KEY = "epics";
@@ -31,56 +35,51 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
+    protected void addTasks(List<? extends Task> tasks) {
+        long generatorId = 0;
+        for (Task task : tasks) {
+            final long id = task.getId();
+            if (id > generatorId) {
+                generatorId = id;
+            }
+            TasksTypes type = task.getTaskType();
+            if (type == TasksTypes.TASK) {
+                this.taskMap.put(id, task);
+                prioritizedTasks.add(task);
+            } else if (type == TasksTypes.SUBTASK) {
+                subtaskMap.put(id, (Subtask) task);
+                prioritizedTasks.add(task);
+            } else if (type == TasksTypes.EPIC) {
+                epicMap.put(id, (Epic) task);
+            }
+        }
+
+    }
+
     public void load() {
-        long maxId = 0;
         JsonElement jsonTasks = JsonParser.parseString(client.load(TASKS_KEY));
-        if (!jsonTasks.isJsonNull() && jsonTasks.isJsonArray()) {
-            JsonArray jsonTasksArray = jsonTasks.getAsJsonArray();
-            for (JsonElement jsonTask : jsonTasksArray) {
-                Task task = gson.fromJson(jsonTask, Task.class);
-                if (maxId < task.getId())
-                    maxId = task.getId();
-                this.taskMap.put(task.getId(), task);
-            }
-        }
+        ArrayList<Task> tasks = gson.fromJson(client.load(TASKS_KEY), new TypeToken<ArrayList<Task>>() {
+        }.getType());
+        addTasks(tasks);
+        ArrayList<Task> epics = gson.fromJson(client.load(EPICS_KEY), new TypeToken<ArrayList<Epic>>() {
+        }.getType());
+        addTasks(epics);
+        ArrayList<Task> subtasks = gson.fromJson(client.load(SUBTASKS_KEY), new TypeToken<ArrayList<Subtask>>() {
+        }.getType());
+        addTasks(subtasks);
 
-        JsonElement jsonEpics = JsonParser.parseString(client.load(EPICS_KEY));
-        if (!jsonEpics.isJsonNull() && jsonTasks.isJsonArray()) {
-            JsonArray jsonEpicsArray = jsonEpics.getAsJsonArray();
-            for (JsonElement jsonEpic : jsonEpicsArray) {
-                Epic task = gson.fromJson(jsonEpic, Epic.class);
-                if (maxId < task.getId())
-                    maxId = task.getId();
-                this.epicMap.put(task.getId(), task);
-            }
-        }
-
-        JsonElement jsonSubtasks = JsonParser.parseString(client.load(SUBTASKS_KEY));
-        if (!jsonSubtasks.isJsonNull() && jsonTasks.isJsonArray()) {
-            JsonArray jsonSubtasksArray = jsonSubtasks.getAsJsonArray();
-            for (JsonElement jsonSubtask : jsonSubtasksArray) {
-                Subtask task = gson.fromJson(jsonSubtask, Subtask.class);
-                if (maxId < task.getId())
-                    maxId = task.getId();
-                Epic epic = this.epicMap.get(task.getEpicId());
-                epic.addSubtaskId(task.getId());
-                this.subtaskMap.put(task.getId(), task);
-                this.prioritizedTasks.add(task);
-                this.subtaskMap.put(task.getId(), task);
-            }
-        }
-
-        id = maxId;
         JsonElement jsonHistoryList = JsonParser.parseString(client.load(HISTORY_KEY));
         if (!jsonHistoryList.isJsonNull() && jsonTasks.isJsonArray()) {
             JsonArray jsonHistoryArray = jsonHistoryList.getAsJsonArray();
             for (JsonElement jsonTaskId : jsonHistoryArray) {
                 long taskId = jsonTaskId.getAsLong();
                 Task task = this.taskMap.get(taskId);
-                if (task == null)
+                if (task.getTaskType().equals(TasksTypes.EPIC)) {
                     task = this.epicMap.get(taskId);
-                if (task == null)
+                }
+                if (task.getTaskType().equals(TasksTypes.SUBTASK)) {
                     task = this.subtaskMap.get(taskId);
+                }
                 this.historyManager.add(task);
             }
         }
