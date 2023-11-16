@@ -20,7 +20,7 @@ public final class Managers {
     }
 
     public static HttpTaskManager getDefaultHttp() {
-        return new HttpTaskManager("http://localhost:" + "8078/");
+        return new HttpTaskManager("http://localhost:" + "8078/", false);
     }
 
     public static HistoryManager getDefaultHistory() {

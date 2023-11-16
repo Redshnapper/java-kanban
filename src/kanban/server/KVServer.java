@@ -19,7 +19,7 @@ public class KVServer {
 
     public KVServer() throws IOException {
         apiToken = generateApiToken();
-        server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+        server = HttpServer.create(new InetSocketAddress("localhost", PORT), 5);
         server.createContext("/register", this::register);
         server.createContext("/save", this::save);
         server.createContext("/load", this::load);
@@ -112,7 +112,10 @@ public class KVServer {
         System.out.println("API_TOKEN: " + apiToken);
         server.start();
     }
-
+    public void stop() {
+        System.out.println("пока-пока");
+        server.stop(0);
+    }
     private String generateApiToken() {
         return "" + System.currentTimeMillis();
     }

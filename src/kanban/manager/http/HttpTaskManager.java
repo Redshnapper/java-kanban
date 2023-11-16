@@ -21,17 +21,21 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private static final Gson gson = GsonUtils.getGson();
     private final String TASKS_KEY = "tasks";
     private final String SUBTASKS_KEY = "subtasks";
-    private final String HISTORY_KEY = "epics";
-    private final String EPICS_KEY = "history";
+    private final String HISTORY_KEY = "history";
+    private final String EPICS_KEY = "epics";
     private final KVTaskClient client;
 
 
-    public HttpTaskManager(String url) {
+    public HttpTaskManager(String url, boolean isLoad) {
         super();
         try {
             client = new KVTaskClient(url);
         } catch (RuntimeException e) {
             throw new HttpManagerStartException("Ошибка при инициализации клиента: \n" + e.getMessage());
+        }
+
+        if (isLoad) {
+            load();
         }
     }
 
@@ -74,12 +78,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
             for (JsonElement jsonTaskId : jsonHistoryArray) {
                 long taskId = jsonTaskId.getAsLong();
                 Task task = this.taskMap.get(taskId);
-                if (task.getTaskType().equals(TasksTypes.EPIC)) {
+                if (task == null)
                     task = this.epicMap.get(taskId);
-                }
-                if (task.getTaskType().equals(TasksTypes.SUBTASK)) {
+                if (task == null)
                     task = this.subtaskMap.get(taskId);
-                }
                 this.historyManager.add(task);
             }
         }

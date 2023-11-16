@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import kanban.manager.Managers;
 import kanban.manager.TasksManager;
+import kanban.manager.http.HttpTaskManager;
 import kanban.model.Epic;
 import kanban.model.Subtask;
 import kanban.model.Task;
@@ -22,6 +23,8 @@ public class Main {
 
         Task task = new Task("Task #1", "task description", TaskStatuses.NEW);
         manager.addNewTask(task);
+        Task task3 = new Task("Task #3", "task description", TaskStatuses.NEW);
+        manager.addNewTask(task3);
         Epic epic = new Epic("Epic #1", "epic description", LocalDateTime.now(), 2);
         manager.createEpic(epic);
         final long epicId = manager.addNewEpic(epic);
@@ -40,6 +43,17 @@ public class Main {
         System.out.println(gson.toJson(manager.getEpics()));
         System.out.println("История");
         System.out.println(gson.toJson(manager.getHistory()));
+
+
+        HttpTaskManager taskManager = new HttpTaskManager("http://localhost:" + "8078/", true);
+        System.out.println("Задачи");
+        System.out.println(gson.toJson(taskManager.getTasks()));
+        System.out.println("Подзадачи");
+        System.out.println(gson.toJson(taskManager.getSubtasks()));
+        System.out.println("Эпики");
+        System.out.println(gson.toJson(taskManager.getEpics()));
+        System.out.println("История");
+        System.out.println(gson.toJson(taskManager.getHistory()));
     }
 }
 
