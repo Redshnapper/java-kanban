@@ -3,7 +3,6 @@ package kanban.manager.http;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import kanban.GsonUtils;
-import kanban.LocalDateTimeAdapter;
 import kanban.client.KVTaskClient;
 import kanban.manager.exception.HttpManagerStartException;
 import kanban.manager.file.FileBackedTasksManager;
@@ -12,7 +11,6 @@ import kanban.model.Subtask;
 import kanban.model.Task;
 import kanban.model.TasksTypes;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

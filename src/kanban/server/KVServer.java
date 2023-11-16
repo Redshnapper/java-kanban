@@ -112,10 +112,6 @@ public class KVServer {
         System.out.println("API_TOKEN: " + apiToken);
         server.start();
     }
-    public void stop() {
-        System.out.println("пока-пока");
-        server.stop(0);
-    }
     private String generateApiToken() {
         return "" + System.currentTimeMillis();
     }

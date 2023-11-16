@@ -1,7 +1,6 @@
 package kanban;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import kanban.manager.Managers;
 import kanban.manager.TasksManager;
 import kanban.manager.http.HttpTaskManager;
